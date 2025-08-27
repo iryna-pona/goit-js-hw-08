@@ -64,26 +64,51 @@ const images = [
   },
 ];
 
-const galleryImages = document.querySelector(".gallery");
+const gallery = document.querySelector(".gallery");
 
-galleryImages.insertAdjacentHTML("beforeend", createMarkup(images));
+gallery.insertAdjacentHTML("beforeend", createMarkup(images));
 
-galleryImages.addEventListener("click", handlerClick);
+gallery.addEventListener("click", handlerClick);
 
 function createMarkup(arr) {
-  return arr
-    .map(
-      (item) => `
+  return arr.map(item => `
     <li class="gallery-item">
-        <a class="gallery-link" href="large-image.jpg">
-            <img
-                class="gallery-image"
-                src="small-image.jpg"
-                data-source="large-image.jpg"
-                alt="Image description"
-            />
-        </a>
-        </li>`
-    )
-    .join("");
+      <a class="gallery-link" href="${item.original}">
+        <img class="gallery-image"
+             src="${item.preview}" 
+             data-source="${item.original}" 
+             alt="${item.description}" 
+             width="360"
+        />
+      </a>
+    </li>`
+  ).join("");
 }
+
+function handlerClick(event) {
+  if (event.target.classList.contains("gallery-image")) {
+    event.preventDefault();
+    
+    const imageEl = event.target.dataset.source;
+    const altEl = event.target.alt;
+
+    const instance = basicLightbox.create(`
+      <div class="modal">
+        <img class="modal-image" src="${imageEl}" alt = "${altEl}">
+      </div>
+    `);
+
+    instance.show();
+
+    const modalImage = document.querySelector(".modal-image");
+
+    modalImage.addEventListener("click", () => {
+      instance.close();
+    });
+  }
+}
+
+
+
+
+
